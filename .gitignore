@@ -1,0 +1,6 @@
+build/
+.west/
+*.pyc
+__pycache__/
+.vscode/
+*.log
