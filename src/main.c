@@ -128,6 +128,11 @@ static const struct bt_data beacon_ad[] = {
 		sizeof(ibeacon_mfg_data)),
 };
 
+/* Scan response com nome do dispositivo */
+static const struct bt_data beacon_sd[] = {
+	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
+};
+
 /* ---------- UART ---------- */
 static void uart_cb(const struct device *dev, struct uart_event *evt,
 		    void *user_data)
@@ -197,8 +202,16 @@ static int beacon_start(void)
 
 	update_beacon_data();
 
-	err = bt_le_adv_start(BT_LE_ADV_NCONN, beacon_ad,
-			      ARRAY_SIZE(beacon_ad), NULL, 0);
+/* Non-connectable scannable: permite scan response com o nome */
+	static const struct bt_le_adv_param adv_param =
+		BT_LE_ADV_PARAM_INIT(BT_LE_ADV_OPT_USE_IDENTITY | BT_LE_ADV_OPT_SCANNABLE,
+				     BT_GAP_ADV_FAST_INT_MIN_2,
+				     BT_GAP_ADV_FAST_INT_MAX_2,
+				     NULL);
+
+	err = bt_le_adv_start(&adv_param, beacon_ad,
+			      ARRAY_SIZE(beacon_ad), beacon_sd,
+			      ARRAY_SIZE(beacon_sd));
 	if (err) {
 		LOG_ERR("Erro ao iniciar beacon: %d", err);
 		return err;
@@ -368,7 +381,7 @@ static void print_thread_fn(void *p1, void *p2, void *p3)
 	ARG_UNUSED(p3);
 
 	struct scan_msg msg;
-	char addr_str[BT_ADDR_LE_STR_LEN];
+	char addr_str[BT_ADDR_STR_LEN];
 
 	for (;;) {
 		if (k_msgq_get(&scan_msgq, &msg, K_FOREVER) == 0) {
@@ -376,7 +389,7 @@ static void print_thread_fn(void *p1, void *p2, void *p3)
 
 			dk_set_led_on(FOUND_LED);
 
-			bt_addr_le_to_str(&msg.addr, addr_str, sizeof(addr_str));
+			bt_addr_to_str(&msg.addr.a, addr_str, sizeof(addr_str));
 
 			if (msg.is_beacon) {
 				uart_send("[%3d] %s (%s) RSSI:%d dBm ** iBEACON ** Major:%u Minor:%u TxPwr:%d\r\n",
