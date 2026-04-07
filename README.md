@@ -10,19 +10,19 @@
 ![Platform](https://img.shields.io/badge/Platform-nRF52840_DK-orange)
 ![BLE](https://img.shields.io/badge/Bluetooth-5.0_LE-0082FC?logo=bluetooth&logoColor=white)
 
-*Firmware de dois modos que transforma o nRF52840 DK em um beacon iBeacon ou scanner de dispositivos BLE, com saida em tempo real via UART.*
+*Firmware de dois modos que transforma o nRF52840 DK em um beacon iBeacon ou scanner de dispositivos BLE, com saída em tempo real via UART.*
 
 </div>
 
 ---
 
-## Visao Geral
+## Visão Geral
 
-Firmware completo para a **nRF52840 DK** com dois modos de operacao alternáveis por botao:
+Firmware completo para a **nRF52840 DK** com dois modos de operação alternáveis por botão:
 
-| Modo | Funcao | Analogia |
+| Modo | Função | Analogia |
 |------|--------|----------|
-| **Beacon** | Transmite pacotes iBeacon detectaveis por qualquer dispositivo BLE | Como um farol emitindo sinal para quem estiver perto |
+| **Beacon** | Transmite pacotes iBeacon detectáveis por qualquer dispositivo BLE | Como um farol emitindo sinal para quem estiver perto |
 | **Scanner** | Escaneia e lista todos os dispositivos BLE ao redor via UART | Como um radar que detecta tudo em volta |
 
 ```
@@ -32,17 +32,17 @@ Firmware completo para a **nRF52840 DK** com dois modos de operacao alternáveis
 |  MODO BEACON:   nRF52840 ---- iBeacon ----> Celulares / Apps     |
 |  MODO SCANNER:  Dispositivos BLE --> nRF52840 --UART--> PuTTY    |
 |                                                                   |
-|  [BTN1] Alterna modo   [BTN2] Acao contextual                    |
+|  [BTN1] Alterna modo   [BTN2] Ação contextual                    |
 |  [BTN3] Reset scan     [BTN4] Status                             |
 |  (LED1) Running  (LED2) Beacon  (LED3) Scanner  (LED4) Found     |
 +-------------------------------------------------------------------+
 ```
 
-## Demonstracao
+## Demonstração
 
 ### Modo Beacon — nRF Connect App (celular)
 
-O beacon eh detectado como **iBeacon** pelo app nRF Connect, exibindo UUID, Major, Minor e TX Power:
+O beacon é detectado como **iBeacon** pelo app nRF Connect, exibindo UUID, Major, Minor e TX Power:
 
 ```
 nRF52840_Beacon  (iBeacon)
@@ -95,7 +95,7 @@ Filtro: duplicados removidos
                 +-----------+------------+
                             | advertising packets
                 +-----------v------------+
-                | scan_cb() [BLE Thread] |  <-- Nao bloqueia!
+                | scan_cb() [BLE Thread] |  <-- Não bloqueia!
                 | - Filtra duplicados    |
                 | - Parse ad data        |
                 | - Enfileira mensagem   |
@@ -103,11 +103,11 @@ Filtro: duplicados removidos
                             | K_MSGQ (message queue)
                 +-----------v------------+
                 | print_thread [Prio 8]  |  <-- Thread dedicada
-                | - Le da fila           |
+                | - Lê da fila           |
                 | - Formata string       |
                 | - Envia pela UART      |
                 +-----------+------------+
-                            | K_SEM (semaforo TX done)
+                            | K_SEM (semáforo TX done)
                 +-----------v------------+
                 |   UART DMA (Hardware)  |
                 +-----------+------------+
@@ -117,18 +117,18 @@ Filtro: duplicados removidos
                 +------------------------+
 ```
 
-**Por que essa arquitetura?** O BLE radio gera centenas de callbacks por segundo. Se o callback tentasse enviar diretamente pela UART, o buffer seria sobrescrito antes de completar o envio (texto embaralhado) e a thread BLE ficaria travada. A solucao usa **producer-consumer**: o callback apenas enfileira (rapido), e uma thread separada consome e imprime (pode bloquear sem problema).
+**Por que essa arquitetura?** O BLE radio gera centenas de callbacks por segundo. Se o callback tentasse enviar diretamente pela UART, o buffer seria sobrescrito antes de completar o envio (texto embaralhado) e a thread BLE ficaria travada. A solução usa **producer-consumer**: o callback apenas enfileira (rápido), e uma thread separada consome e imprime (pode bloquear sem problema).
 
 ## Controles
 
-### Botoes
+### Botões
 
-| Botao | Funcao |
+| Botão | Função |
 |-------|--------|
-| **Botao 1** | Alterna entre modo Beacon <-> Scanner |
-| **Botao 2** | Scanner: inicia/para scan - Beacon: incrementa Minor |
-| **Botao 3** | Reseta contador e inicia novo scan |
-| **Botao 4** | Mostra status atual no PuTTY |
+| **Botão 1** | Alterna entre modo Beacon <-> Scanner |
+| **Botão 2** | Scanner: inicia/para scan · Beacon: incrementa Minor |
+| **Botão 3** | Reseta contador e inicia novo scan |
+| **Botão 4** | Mostra status atual no PuTTY |
 
 ### LEDs
 
@@ -141,14 +141,14 @@ Filtro: duplicados removidos
 
 ## Hardware
 
-| Componente | Descricao |
+| Componente | Descrição |
 |------------|-----------|
 | **Placa** | nRF52840 DK (PCA10056) |
 | **MCU** | nRF52840 — ARM Cortex-M4F, 64 MHz, 1 MB Flash, 256 KB RAM |
 | **Radio** | Bluetooth 5.0 / BLE integrado |
 | **Interface UART** | J-Link VCOM via USB onboard (115200 baud) |
 
-## Pre-requisitos
+## Pré-requisitos
 
 - [nRF Connect SDK](https://www.nordicsemi.com/Products/Development-tools/nRF-Connect-SDK) v3.x (testado com v3.0.2)
 - [nRF Connect for Desktop](https://www.nordicsemi.com/Products/Development-tools/nRF-Connect-for-Desktop) com Toolchain Manager
@@ -160,11 +160,11 @@ Filtro: duplicados removidos
 
 ```
 nrf52840_ble_beacon_scanner/
-├── CMakeLists.txt          # Build configuration (CMake/Zephyr)
-├── prj.conf                # Kernel configuration (Kconfig)
-├── app.overlay             # Devicetree overlay (UART binding)
+├── CMakeLists.txt          # Configuração de build (CMake/Zephyr)
+├── prj.conf                # Configuração do kernel (Kconfig)
+├── app.overlay             # Overlay do devicetree (mapeamento UART)
 ├── src/
-│   └── main.c              # Firmware source (~600 lines)
+│   └── main.c              # Código fonte do firmware (~600 linhas)
 ├── .gitignore
 ├── LICENSE                  # MIT
 └── README.md
@@ -172,13 +172,13 @@ nrf52840_ble_beacon_scanner/
 
 ## Build & Flash
 
-### 1. Clone o repositorio
+### 1. Clone o repositório
 
 ```bash
 git clone https://github.com/Dante-138/nrf52840-ble-beacon-scanner.git
 ```
 
-### 2. Copie para um caminho sem espacos (necessario para CMake/GCC)
+### 2. Copie para um caminho sem espaços (necessário para CMake/GCC)
 
 ```bash
 xcopy /E /I nrf52840-ble-beacon-scanner C:\ncs\projects\nrf52840_ble_beacon_scanner
@@ -191,7 +191,7 @@ west build -b nrf52840dk/nrf52840 C:\ncs\projects\nrf52840_ble_beacon_scanner ^
   --no-sysbuild --build-dir C:\ncs\projects\nrf52840_ble_beacon_scanner\build --pristine
 ```
 
-> **Nota:** O `--no-sysbuild` eh necessario no nRF Connect SDK v3.x para projetos standalone.
+> **Nota:** O `--no-sysbuild` é necessário no nRF Connect SDK v3.x para projetos standalone.
 
 ### 4. Grave na placa
 
@@ -204,18 +204,18 @@ west flash --runner jlink --build-dir C:\ncs\projects\nrf52840_ble_beacon_scanne
 ### Testar modo Beacon
 
 1. O firmware inicia automaticamente em modo **Beacon** (LED2 aceso)
-2. No celular, abra o app **nRF Connect** e faca **Scan**
-3. Procure por **"nRF52840_Beacon"** — aparecera como iBeacon com UUID, Major e Minor
-4. Pressione **Botao 2** na DK para incrementar o Minor e ver a mudanca no app
+2. No celular, abra o app **nRF Connect** e faça **Scan**
+3. Procure por **"nRF52840_Beacon"** — aparecerá como iBeacon com UUID, Major e Minor
+4. Pressione **Botão 2** na DK para incrementar o Minor e ver a mudança no app
 
 ### Testar modo Scanner
 
-1. Pressione **Botao 1** para alternar para modo Scanner (LED3 aceso)
+1. Pressione **Botão 1** para alternar para modo Scanner (LED3 aceso)
 2. Abra o **PuTTY** (Serial, 115200 baud, porta COMx)
 3. Os dispositivos BLE ao redor aparecem listados em tempo real
-4. iBeacons sao destacados com `** iBEACON **` e seus dados
-5. Pressione **Botao 2** para parar/reiniciar o scan
-6. Pressione **Botao 4** para ver o status
+4. iBeacons são destacados com `** iBEACON **` e seus dados
+5. Pressione **Botão 2** para parar/reiniciar o scan
+6. Pressione **Botão 4** para ver o status
 
 ### Testar com dois nRF52840 DKs
 
@@ -223,7 +223,7 @@ west flash --runner jlink --build-dir C:\ncs\projects\nrf52840_ble_beacon_scanne
 2. **DK2**: Modo Scanner (escaneando)
 3. A DK2 detecta a DK1 como iBeacon no PuTTY
 
-## Detalhes Tecnicos
+## Detalhes Técnicos
 
 ### Formato iBeacon
 
@@ -235,17 +235,17 @@ west flash --runner jlink --build-dir C:\ncs\projects\nrf52840_ble_beacon_scanne
 +-------+------------------------------------------------------------+
 ```
 
-### Configuracoes de Scan
+### Configurações de Scan
 
-| Parametro | Valor |
+| Parâmetro | Valor |
 |-----------|-------|
-| **Tipo** | Passivo (nao envia scan request) |
+| **Tipo** | Passivo (não envia scan request) |
 | **Intervalo** | 100 ms (0x00A0) |
 | **Janela** | 50 ms (0x0050) |
 | **Filtro HW** | BT_LE_SCAN_OPT_FILTER_DUPLICATE |
-| **Filtro SW** | Tabela de 64 enderecos MAC unicos |
+| **Filtro SW** | Tabela de 64 endereços MAC únicos |
 
-### Stack Tecnologico
+### Stack Tecnológico
 
 | Camada | Tecnologia |
 |--------|------------|
@@ -253,10 +253,10 @@ west flash --runner jlink --build-dir C:\ncs\projects\nrf52840_ble_beacon_scanne
 | **SDK** | nRF Connect SDK v3.0.2 |
 | **BLE Stack** | Zephyr Bluetooth (SoftDevice Controller) |
 | **UART** | Async API com DMA |
-| **Concorrencia** | K_MSGQ + K_SEM + K_THREAD |
+| **Concorrência** | K_MSGQ + K_SEM + K_THREAD |
 | **Build** | CMake + Ninja via West |
 
-### Configuracoes Kconfig (prj.conf)
+### Configurações Kconfig (prj.conf)
 
 ```ini
 CONFIG_BT=y                    # Habilita stack BLE
@@ -264,53 +264,53 @@ CONFIG_BT_OBSERVER=y           # Role: Observer (scan)
 CONFIG_BT_BROADCASTER=y        # Role: Broadcaster (advertise)
 CONFIG_BT_DEVICE_NAME="nRF52840_Beacon"
 
-CONFIG_SERIAL=y                # UART para saida no PuTTY
-CONFIG_UART_ASYNC_API=y        # API assincrona com DMA
-CONFIG_DK_LIBRARY=y            # Abstrai LEDs e botoes do DK
+CONFIG_SERIAL=y                # UART para saída no PuTTY
+CONFIG_UART_ASYNC_API=y        # API assíncrona com DMA
+CONFIG_DK_LIBRARY=y            # Abstrai LEDs e botões do DK
 
-CONFIG_LOG=y                   # Logging via RTT (nao pela UART)
+CONFIG_LOG=y                   # Logging via RTT (não pela UART)
 CONFIG_USE_SEGGER_RTT=y
-CONFIG_UART_CONSOLE=n          # UART reservada para dados, nao console
+CONFIG_UART_CONSOLE=n          # UART reservada para dados, não console
 ```
 
 ## Changelog
 
-### v2.0 — Correcoes de estabilidade e UX
+### v2.0 — Correções de estabilidade e UX
 
 **UART Race Condition (texto embaralhado)**
-- **Problema**: Buffer global unico era sobrescrito antes da UART completar o envio
+- **Problema**: Buffer global único era sobrescrito antes da UART completar o envio
 - **Causa raiz**: `scan_cb` chamava `uart_send` direto da thread BLE RX
-- **Solucao**: Desacoplamento via `K_MSGQ` (message queue). Callback enfileira, thread dedicada imprime. UART serializada por semaforo `uart_tx_done`
+- **Solução**: Desacoplamento via `K_MSGQ` (message queue). Callback enfileira, thread dedicada imprime. UART serializada por semáforo `uart_tx_done`
 
 **Dispositivos duplicados no scan**
 - **Problema**: Filtro do controller BLE tem capacidade limitada (~400+ duplicatas)
-- **Solucao**: Filtro por software com tabela de ate 64 MACs. Limpa a cada novo scan
+- **Solução**: Filtro por software com tabela de até 64 MACs. Limpa a cada novo scan
 
 **Beacon sem nome no nRF Connect (mostrava "N/A")**
 - **Problema**: Advertising era non-connectable non-scannable, sem scan response
-- **Solucao**: Mudou para scannable advertising com scan response contendo `BT_DATA_NAME_COMPLETE`
+- **Solução**: Mudou para scannable advertising com scan response contendo `BT_DATA_NAME_COMPLETE`
 
-**Tipo de endereco duplicado no output**
-- **Problema**: `bt_addr_le_to_str()` ja incluia `(random)`, e `addr_type_str()` adicionava `(rnd)`
-- **Solucao**: Trocou para `bt_addr_to_str()` (so MAC) + `addr_type_str()` (so tipo)
+**Tipo de endereço duplicado no output**
+- **Problema**: `bt_addr_le_to_str()` já incluía `(random)`, e `addr_type_str()` adicionava `(rnd)`
+- **Solução**: Trocou para `bt_addr_to_str()` (só MAC) + `addr_type_str()` (só tipo)
 
 ### v1.0 — Release inicial
 
 - Modo Beacon com iBeacon (UUID Apple AirLocate)
 - Modo Scanner com output UART
-- Controle por 4 botoes + 4 LEDs de status
+- Controle por 4 botões + 4 LEDs de status
 
 ## Troubleshooting
 
-| Problema | Solucao |
+| Problema | Solução |
 |----------|---------|
-| Beacon nao aparece no celular | Verifique se esta no modo Beacon (LED2 aceso). Resete a DK |
-| Scanner nao mostra dispositivos | Certifique-se que ha dispositivos BLE por perto. Verifique LED3 |
-| PuTTY nao mostra nada | Verifique porta COM e baud rate 115200. Flow Control = None |
-| Erro de build com espacos no path | Copie para `C:\ncs\projects\` e use `--build-dir` |
-| `west: command not found` | Use o terminal do Toolchain Manager (nao PowerShell direto) |
+| Beacon não aparece no celular | Verifique se está no modo Beacon (LED2 aceso). Resete a DK |
+| Scanner não mostra dispositivos | Certifique-se que há dispositivos BLE por perto. Verifique LED3 |
+| PuTTY não mostra nada | Verifique porta COM e baud rate 115200. Flow Control = None |
+| Erro de build com espaços no path | Copie para `C:\ncs\projects\` e use `--build-dir` |
+| `west: command not found` | Use o terminal do Toolchain Manager (não PowerShell direto) |
 
-## Licenca
+## Licença
 
 MIT License — veja [LICENSE](LICENSE)
 
