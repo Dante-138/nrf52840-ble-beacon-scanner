@@ -30,19 +30,6 @@ Bare-metal C firmware running on **Zephyr RTOS** for the Nordic **nRF52840 DK**.
 - **BLE advertising & scanning** — Full iBeacon format, passive scan with HW + SW duplicate filtering
 - **Hardware interrupts** — GPIO edge-triggered callbacks for 4 buttons
 - **Modular architecture** — Clean separation between BLE radio, data processing, and UART output
-
-### Screenshots
-
-<p align="center">
-  <img src="docs/scanner_putty.png" width="420" alt="Scanner Mode — PuTTY UART output"/>
-  &nbsp;&nbsp;
-  <img src="docs/beacon_nrf_connect.png" width="280" alt="Beacon Mode — nRF Connect App"/>
-</p>
-
-<p align="center">
-  <em>Left: Scanner mode listing 21 BLE devices via UART &nbsp;|&nbsp; Right: iBeacon detected on nRF Connect mobile app</em>
-</p>
-
 ---
 
 ## Visão Geral
