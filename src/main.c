@@ -7,7 +7,7 @@
  *
  * Botoes:
  *   Botao 1 = Alterna entre modo Beacon e Scanner
- *   Botao 2 = Inicia/para o scan (modo Scanner) ou muda UUID (modo Beacon)
+ *   Botao 2 = Inicia/para o scan (modo Scanner) ou muda Minor (modo Beacon)
  *
  * LEDs:
  *   LED1 piscando = sistema rodando
@@ -513,7 +513,7 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 			/* Incrementa Minor do beacon */
 			beacon_stop();
 			beacon_minor++;
-			if (beacon_minor > 0xFFFF) {
+			if (beacon_minor == 0) {
 				beacon_minor = 1;
 				beacon_major++;
 			}

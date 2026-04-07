@@ -2,7 +2,7 @@
 
 # nRF52840 BLE Beacon + Scanner
 
-**Firmware embarcado para nRF52840 DK — iBeacon Transmitter & BLE Device Scanner**
+**Embedded firmware for nRF52840 DK — iBeacon Transmitter & BLE Device Scanner**
 
 ![Zephyr](https://img.shields.io/badge/Zephyr_RTOS-v3.7-blue?logo=zephyr&logoColor=white)
 ![nRF Connect SDK](https://img.shields.io/badge/nRF_Connect_SDK-v3.0.2-00A9CE?logo=nordicsemiconductor&logoColor=white)
@@ -10,9 +10,38 @@
 ![Platform](https://img.shields.io/badge/Platform-nRF52840_DK-orange)
 ![BLE](https://img.shields.io/badge/Bluetooth-5.0_LE-0082FC?logo=bluetooth&logoColor=white)
 
-*Firmware de dois modos que transforma o nRF52840 DK em um beacon iBeacon ou scanner de dispositivos BLE, com saída em tempo real via UART.*
+*Dual-mode firmware that turns the nRF52840 DK into an iBeacon transmitter or a BLE device scanner, with real-time output via UART.*
 
 </div>
+
+---
+
+## Overview (English)
+
+Bare-metal C firmware running on **Zephyr RTOS** for the Nordic **nRF52840 DK**. The device operates in two switchable modes controlled by hardware buttons:
+
+- **Beacon Mode** — Transmits Apple-format iBeacon advertising packets (UUID, Major, Minor, TX Power)
+- **Scanner Mode** — Passively scans all nearby BLE devices and outputs a formatted list via UART (PuTTY / serial terminal)
+
+### Key Technical Highlights
+
+- **RTOS threading** — Producer-consumer pattern with `K_MSGQ` (message queue) + `K_SEM` (semaphore)
+- **Async UART with DMA** — Non-blocking serial output, race-condition-free
+- **BLE advertising & scanning** — Full iBeacon format, passive scan with HW + SW duplicate filtering
+- **Hardware interrupts** — GPIO edge-triggered callbacks for 4 buttons
+- **Modular architecture** — Clean separation between BLE radio, data processing, and UART output
+
+### Screenshots
+
+<p align="center">
+  <img src="docs/scanner_putty.png" width="420" alt="Scanner Mode — PuTTY UART output"/>
+  &nbsp;&nbsp;
+  <img src="docs/beacon_nrf_connect.png" width="280" alt="Beacon Mode — nRF Connect App"/>
+</p>
+
+<p align="center">
+  <em>Left: Scanner mode listing 21 BLE devices via UART &nbsp;|&nbsp; Right: iBeacon detected on nRF Connect mobile app</em>
+</p>
 
 ---
 
@@ -78,7 +107,7 @@ Filtro: duplicados removidos
 
 [  1] 23:08:30:10:00:3F (pub) RSSI:-71 dBm
 [  2] CD:EB:7A:A7:DF:BC (rnd) RSSI:-83 dBm
-[  3] 63:B0:6A:7D:82:B5 (rnd) RSSI:-37 dBm  "IANZINHO"
+[  3] 63:B0:6A:7D:82:B5 (rnd) RSSI:-37 dBm  "Mi Band 7"
 [  4] 78:A7:A1:23:C9:FC (rnd) RSSI:-81 dBm
 [  5] C7:4C:58:7A:D1:1F (rnd) RSSI:-65 dBm
 [  6] EC:22:B3:4D:01:A4 (rnd) RSSI:-70 dBm
